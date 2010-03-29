@@ -41,16 +41,8 @@ void placewhitestone(picture pic=currentpicture,pair intersection) {
 	filldraw(pic,circle(intersection,0.46),white);
 }
 
-void drawpieces() {
-	filldraw(circle((5,5),0.47),white);
-	filldraw(circle((6,5),0.465),black);
-	filldraw(circle((6,6),0.47),white);
-	filldraw(circle((5,4),0.465),red);
-	filldraw(circle((5,6),0.47),white);
-	filldraw(circle((9,9),0.465),black);
-//	filldraw(circle((12,4),0.47),white);
-	label("23",(6,6));
-}
+//	label("23",(6,6));
+
 
 picture mygoban; //if you will
 drawgoban(mygoban,500,19);
