@@ -2,7 +2,7 @@ import fontsize;
 usepackage("fontspec");
 usepackage("xunicode");
 usepackage("xltxtra");
-texpreamble("\setmainfont{Helvetica Neue}");
+texpreamble("\setmainfont{Linux Biolinum}");
 
 struct Goban {
 	int size;
@@ -14,6 +14,10 @@ struct Goban {
 		this.lines = lines;
 	}
 }
+
+// Global variables -- kind of afraid of these b/c I don't understand their interaction w/ XeTeX
+
+real stonefontscalar = 1.05;
 
 void renderblackstone(picture pic=currentpicture,pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
@@ -27,12 +31,12 @@ void whitestonenum(Goban gb, pair intersection, int movenum) {
 	renderwhitestone(gb.pic,intersection);
 	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*1)));
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*1*stonefontscalar)) );
 	} 
 	else if (movenum <100) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7*stonefontscalar)) );
 	} else if (movenum > 99){
-		label(gb.pic,xscale(.7)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
+		label(gb.pic,xscale(.7)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7*stonefontscalar)) );
 	}	
 }
 
@@ -40,12 +44,12 @@ void blackstonenum(Goban gb, pair intersection, int movenum) {
 	renderblackstone(gb.pic,intersection);
 	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*1))+white);
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*1*stonefontscalar))+white);
 	} 
 	else if (movenum <100) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7*stonefontscalar))+white);
 	} else if (movenum > 99){
-		label(gb.pic,xscale(.7)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
+		label(gb.pic,xscale(.7)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7*stonefontscalar))+white);
 	}
 }
 
@@ -91,13 +95,13 @@ void drawgoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
 }
 
-Goban mygoban = Goban(300,13);
+Goban mygoban = Goban(500,9);
 drawgoban(mygoban);
 renderblackstone(mygoban.pic,(3,5));
 whitestonenum(mygoban,(4,4),5);
 blackstonenum(mygoban,(2,3),7);
 blackstonenum(mygoban,(7,7),8);
-whitestonenum(mygoban,(2,2),33);
+whitestonenum(mygoban,(2,2),69);
 whitestonenum(mygoban,(5,5),137);
 blackstonenum(mygoban,(7,8),77);
 blackstonenum(mygoban,(9,3),122);
