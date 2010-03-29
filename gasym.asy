@@ -21,14 +21,27 @@ void renderwhitestone(picture pic=currentpicture,pair intersection) {
 
 void whitestonenum(Goban gb, pair intersection, int movenum) {
 	renderwhitestone(gb.pic,intersection);
-	label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*1)));
+	if (movenum > 1 & movenum < 10 ) {
+		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*1)));
+	} 
+	else if (movenum <100) {
+		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
+	} else if (movenum > 99){
+		label(gb.pic,xscale(.7)*format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
+	}	
 }
 
 void blackstonenum(Goban gb, pair intersection, int movenum) {
 	renderblackstone(gb.pic,intersection);
-	label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*1))+white);
+	if (movenum > 1 & movenum < 10 ) {
+		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*1))+white);
+	} 
+	else if (movenum <100) {
+		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
+	} else if (movenum > 99){
+		label(gb.pic,xscale(.7)*format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
+	}
 }
-
 
 void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 
@@ -72,12 +85,15 @@ void drawgoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
 }
 
-
-
-Goban mygoban = Goban(250,9);
+Goban mygoban = Goban(300,13);
 drawgoban(mygoban);
 renderblackstone(mygoban.pic,(3,5));
-whitestonenum(mygoban,(4,4),6);
+whitestonenum(mygoban,(4,4),5);
 blackstonenum(mygoban,(2,3),7);
+blackstonenum(mygoban,(7,7),8);
+whitestonenum(mygoban,(2,2),33);
+whitestonenum(mygoban,(5,5),137);
+blackstonenum(mygoban,(7,8),77);
+blackstonenum(mygoban,(9,3),122);
 
 shipout(mygoban.pic);
