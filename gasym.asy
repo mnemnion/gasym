@@ -53,5 +53,5 @@ placeblackstone(mygoban,(6,7));
 placewhitestone(mygoban,(5,7));
 placeblackstone(mygoban,(7,6));
 placeblackstone(mygoban,(19,19));
-//placewhitestone(mygoban,(12,4));
+placewhitestone(mygoban,(12,4));
 shipout(mygoban);
