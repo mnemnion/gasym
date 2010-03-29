@@ -1,3 +1,7 @@
+
+// This is an experiment!!!
+
+
 void drawgoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 
 	int gobancounter=gobanlines + 1;
