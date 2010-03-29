@@ -1,5 +1,15 @@
 import fontsize; 
 
+struct Goban {
+	int size;
+	int lines;
+	picture pic;
+	
+	void operator init(int size, int lines) {
+		this.size = size;
+		this.lines = lines;
+	}
+}
 
 void placeblackstone(picture pic=currentpicture,pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
@@ -14,7 +24,7 @@ void placewhitenumbered(picture pic=currentpicture,pair intersection,int playnum
 	label(pic,format(playnum),(6,6)); //good for 0-9 in Computer Modern
 }
 
-void drawgoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
+void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 
 	int gobancounter=gobanlines + 1;
 	unitsize(pic,gobansize/(gobancounter+1));
@@ -49,15 +59,19 @@ void drawgoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 	
 	//eventually needs to live where it can be modular!
 	placewhitestone(pic,(2,2));
-	label(pic,format(9),(2,2),fontsize((gobansize/(gobancounter+2)*1.15)));
+	label(pic,format(5),(2,2),fontsize((gobansize/(gobancounter+2)*1.15)));
 //	label(pic,format(3),(2,2),fontsize(50));
 	
+}
 
+void drawgoban(Goban gb) {
+	rendergoban(gb.pic,gb.size,gb.lines);
 }
 
 
 picture mygoban; //if you will
-drawgoban(mygoban,500,9);
+Goban meinegoban = Goban(500,9);
+drawgoban(meinegoban);
 //placeblackstone(mygoban,(5,6));
 //placewhitestone(mygoban,(5,5));
 //placewhitenumbered(mygoban,(6,6),9);
@@ -67,4 +81,4 @@ drawgoban(mygoban,500,9);
 //placeblackstone(mygoban,(19,19));
 //placewhitestone(mygoban,(12,4));
 
-shipout(mygoban);
+shipout(meinegoban.pic);
