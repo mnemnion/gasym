@@ -1,4 +1,8 @@
 import fontsize; 
+usepackage("fontspec");
+usepackage("xunicode");
+usepackage("xltxtra");
+texpreamble("\setmainfont{Helvetica Neue}");
 
 struct Goban {
 	int size;
@@ -21,25 +25,27 @@ void renderwhitestone(picture pic=currentpicture,pair intersection) {
 
 void whitestonenum(Goban gb, pair intersection, int movenum) {
 	renderwhitestone(gb.pic,intersection);
+	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*1)));
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*1)));
 	} 
 	else if (movenum <100) {
-		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
 	} else if (movenum > 99){
-		label(gb.pic,xscale(.7)*format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
+		label(gb.pic,xscale(.7)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7)));
 	}	
 }
 
 void blackstonenum(Goban gb, pair intersection, int movenum) {
 	renderblackstone(gb.pic,intersection);
+	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*1))+white);
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*1))+white);
 	} 
 	else if (movenum <100) {
-		label(gb.pic,format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
+		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
 	} else if (movenum > 99){
-		label(gb.pic,xscale(.7)*format(movenum),intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
+		label(gb.pic,xscale(.7)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*0.7))+white);
 	}
 }
 
@@ -95,5 +101,6 @@ whitestonenum(mygoban,(2,2),33);
 whitestonenum(mygoban,(5,5),137);
 blackstonenum(mygoban,(7,8),77);
 blackstonenum(mygoban,(9,3),122);
+label("lorem ipsum dolor sit amet");
 
 shipout(mygoban.pic);
