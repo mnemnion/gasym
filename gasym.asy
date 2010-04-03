@@ -10,7 +10,14 @@ struct Move {
 	bool iswhite; 
 	bool special; //both false is black 
 	string tag; //special symbol for stone or intersection
+	string comment;
 	pen specialpen; //sends a color or font ; might be needed.
+	
+	void operator init(pair at, int num, bool iswhite) {
+		this.at = at;
+		this.num = num;
+		this.iswhite = iswhite;
+	}
 }
 
 struct Goban {
@@ -23,6 +30,7 @@ struct Goban {
 	void operator init(int size, int lines) {
 		this.size = size;
 		this.lines = lines;
+	//	this.move = new Move[];
 	}
 }
 
@@ -113,20 +121,35 @@ void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 //	label(pic,format(9),(2,2),fontsize((gobansize/(gobancounter+2)*1.15)));
 }
 
+void rendermoves(Goban gb) {
+	for(Move move : gb.move) { 
+		if (move.iswhite) {
+			whitestonenum(gb,move.at,move.num);
+		} else {
+			blackstonenum(gb,move.at,move.num);
+		}
+	}
+} 
+
 void drawgoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
+	rendermoves(gb);
 }
 
-Goban mygoban = Goban(400,23);
+Goban mygoban = Goban(400,9);
+Move mymove = Move((4,4),3,true);
+mygoban.move.push(mymove);
+mymove = Move((3,4),23,false);
+mygoban.move.push(mymove);
 drawgoban(mygoban);
-renderblackstone(mygoban.pic,(3,5));
-whitestonenum(mygoban,(4,4),5);
-blackstonenum(mygoban,(2,3),7);
-blackstonenum(mygoban,(7,7),8);
-whitestonenum(mygoban,(2,2),69);
-whitestonenum(mygoban,(9,4),137);
-blackstonenum(mygoban,(7,8),77);
-blackstonenum(mygoban,(9,3),122);
-blackstonenum(mygoban,(15,15),144);
-whitestonenum(mygoban,(14,15),145);
+//renderblackstone(mygoban.pic,(3,5));
+//whitestonenum(mygoban,(4,4),5);
+//blackstonenum(mygoban,(2,3),7);
+//blackstonenum(mygoban,(7,7),8);
+//whitestonenum(mygoban,(2,2),69);
+//whitestonenum(mygoban,(9,4),137);
+//blackstonenum(mygoban,(7,8),77);
+//blackstonenum(mygoban,(9,3),122);
+//blackstonenum(mygoban,(15,15),144);
+//whitestonenum(mygoban,(14,15),145);
 shipout(mygoban.pic);
