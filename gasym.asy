@@ -4,12 +4,22 @@ usepackage("xunicode");
 usepackage("xltxtra");
 texpreamble("\setmainfont{Linux Libertine}");
 
+struct Move {
+	pair at;
+	int num; //positive for moves, negative for other symbols
+	bool iswhite; 
+	bool special; //both false is black 
+	string tag; //special symbol for stone or intersection
+	pen specialpen; //sends a color or font ; might be needed.
+}
+
 struct Goban {
 	int size;
 	int lines;
 	picture pic;
-	pair[] moves; // stores the numbered stones of the main sequence. 1 goban per variant!
-	
+	// pair[] moves; // stores the numbered stones of the main sequence. 1 goban per variant!
+	Move[] move;
+
 	void operator init(int size, int lines) {
 		this.size = size;
 		this.lines = lines;
@@ -107,7 +117,7 @@ void drawgoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
 }
 
-Goban mygoban = Goban(400,19);
+Goban mygoban = Goban(400,23);
 drawgoban(mygoban);
 renderblackstone(mygoban.pic,(3,5));
 whitestonenum(mygoban,(4,4),5);
