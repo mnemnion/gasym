@@ -42,6 +42,7 @@ real stonefontscalar = 1; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
 
+
 void renderblackstone(picture pic=currentpicture,pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
 }
@@ -131,25 +132,28 @@ void rendermoves(Goban gb) {
 	}
 } 
 
+void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
+	int i = startnum;
+	bool whiteness = startwhite; // black is the default first move
+	for (pair xy : newmoves) {
+		Move addmove = new Move;
+		addmove.at = xy;
+		addmove.num = i;
+		addmove.iswhite = whiteness;
+		whiteness = !whiteness;
+		i = i + 1; // no postfix rly? lolz
+		gb.move.push(addmove);
+	}
+}
+
 void drawgoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
 	rendermoves(gb);
 }
 
+// main sequence. starting to look like high level behavior!
 Goban mygoban = Goban(400,9);
-Move mymove = Move((4,4),3,true);
-mygoban.move.push(mymove);
-mymove = Move((3,4),23,false);
-mygoban.move.push(mymove);
+pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9)};
+addsequence(mygoban,sequence,7,true);
 drawgoban(mygoban);
-//renderblackstone(mygoban.pic,(3,5));
-//whitestonenum(mygoban,(4,4),5);
-//blackstonenum(mygoban,(2,3),7);
-//blackstonenum(mygoban,(7,7),8);
-//whitestonenum(mygoban,(2,2),69);
-//whitestonenum(mygoban,(9,4),137);
-//blackstonenum(mygoban,(7,8),77);
-//blackstonenum(mygoban,(9,3),122);
-//blackstonenum(mygoban,(15,15),144);
-//whitestonenum(mygoban,(14,15),145);
 shipout(mygoban.pic);
