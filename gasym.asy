@@ -49,6 +49,15 @@ void renderblackstone(Goban gb, pair intersection) {
 	filldraw(gb.pic,circle(intersection,0.47),black);
 }
 
+void renderpenrhombus(Goban gb, pair at, pen pencil) {
+	path diamante = ((at.x-0.5,at.y)--(at.x,at.y+0.5)--(at.x+0.5,at.y)--(at.x,at.y-0.5)--cycle);
+	filldraw(gb.pic,diamante,pencil);
+}
+
+void renderwhiterhombus(Goban gb, pair at) {
+	renderpenrhombus(gb,at,white);
+}
+
 void renderwhitestone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.46),white);
 }
@@ -214,16 +223,17 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(400);
+Goban mygoban = Goban(400,9);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
-addsequence(mygoban,sequence,96);
 pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
-addsequence(mygoban,abusetest,13, true);
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
-addstones(mygoban,newstones);
 pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
-addwhitestones(mygoban,newwhites);
 pair[] newblacks = {(3,5),(4,6),(5,7)};
-addblackstones(mygoban,newblacks);
+//addsequence(mygoban,sequence,96);
+//addsequence(mygoban,abusetest,13, true);
+//addstones(mygoban,newstones);
+//addwhitestones(mygoban,newwhites);
+//addblackstones(mygoban,newblacks);
 drawgoban(mygoban);
+renderwhiterhombus(mygoban,(5,5));
 shipout(mygoban.pic);
