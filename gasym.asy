@@ -24,7 +24,6 @@ struct Goban {
 	int size;
 	int lines;
 	picture pic;
-	// pair[] moves; // stores the numbered stones of the main sequence. 1 goban per variant!
 	Move[] move;
 
 	void operator init(int size, int lines=19) {
@@ -42,7 +41,7 @@ real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
 
 
-void renderblackstone(picture pic=currentpicture,pair intersection) {
+void renderblackstone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
 }
 
@@ -50,7 +49,7 @@ void renderblackstone(Goban gb, pair intersection) {
 	filldraw(gb.pic,circle(intersection,0.47),black);
 }
 
-void renderwhitestone(picture pic=currentpicture,pair intersection) {
+void renderwhitestone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.46),white);
 }
 
@@ -125,7 +124,11 @@ void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines) {
 	} 	
 }
 
-bool isplayed (Goban gb, Move move) {
+void rendergoban(Goban gb) {
+	rendergoban(gb.pic,gb.size,gb.lines);
+}
+
+bool isplayed (Goban gb, Move move, int moveindex) {
 
 // detects already played intersections.
 // currently returns true only if the number is larger than a prior play,
@@ -133,19 +136,21 @@ bool isplayed (Goban gb, Move move) {
 // num <= 0. 
 
 	bool status = false;
-	for (Move xy : gb.move ) {
+	for (int i=0; i< gb.move.length; ++i) {
+		Move xy = gb.move[i];
 		if (xy.at == move.at) {
-			if (xy.num < move.num) { 
+			if (i < moveindex) { 
 				status = true;
-			}
+			} 
 		}
 	}
 	return status;
 }
 
 void rendermoves(Goban gb) {
-	for(Move move : gb.move) { 
-	   if (isplayed(gb,move) == false) {
+	for (int i=0; i< gb.move.length; ++i) {
+		Move move = gb.move[i]; //by referenece; should work the same as before
+	   	if (isplayed(gb,move,i) == false) {
 			if ((move.at.x <= gb.lines) & (move.at.y <= gb.lines)
 			  & (move.at.x > 0) & (move.at.y > 0)) {
 				if (move.num > 1) {	
@@ -163,7 +168,7 @@ void rendermoves(Goban gb) {
 					}	
 				}
 			}	
-		}
+	   	}
 	}
 }	
 				
@@ -204,19 +209,18 @@ void addwhitestones(Goban gb, pair[] newmoves) {
 	}
 }
 
-
 void drawgoban(Goban gb) {
-	rendergoban(gb.pic,gb.size,gb.lines);
+	rendergoban(gb);
 	rendermoves(gb);
 }
 
 // main sequence. starting to look like high level behavior!
 Goban mygoban = Goban(400);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
-addsequence(mygoban,sequence,150);
+addsequence(mygoban,sequence,96);
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
 addstones(mygoban,newstones);
-pair[] newwhites = {(3,2),(4,3),(5,4),(6,5)};
+pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
 addwhitestones(mygoban,newwhites);
 pair[] newblacks = {(3,5),(4,6),(5,7)};
 addblackstones(mygoban,newblacks);
