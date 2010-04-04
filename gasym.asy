@@ -107,7 +107,7 @@ void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 		dot(pic,(gobancounter-4,4));
 		dot(pic,(gobancounter-4,gobancounter-4));
 		dot(pic,(4,gobancounter-4));
-		if ((gobanlines > 10) & (gobanlines % 2==1)) {
+		if ((gobanlines > 14) & (gobanlines % 2==1)) {
 		dot(pic,(4,gobanlines/2+0.5));
 		dot(pic,(gobanlines/2+0.5,4));
 		dot(pic,(gobancounter-4,gobanlines/2+0.5));
@@ -171,7 +171,7 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(350,13);
+Goban mygoban = Goban(350,17);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9)};
 addsequence(mygoban,sequence,7,true);
 drawgoban(mygoban);
