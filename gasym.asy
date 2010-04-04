@@ -27,7 +27,7 @@ struct Goban {
 	// pair[] moves; // stores the numbered stones of the main sequence. 1 goban per variant!
 	Move[] move;
 
-	void operator init(int size, int lines) {
+	void operator init(int size, int lines=19) {
 		this.size = size;
 		this.lines = lines;
 	//	this.move = new Move[];
@@ -85,7 +85,7 @@ void blackstonenum(Goban gb, pair intersection, int movenum) {
 	}
 }
 
-void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
+void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines) {
 
 	int gobancounter=gobanlines + 1;
 	unitsize(pic,gobansize/(gobancounter+1));
@@ -147,23 +147,26 @@ bool isplayed (Goban gb, Move move) {
 void rendermoves(Goban gb) {
 	for(Move move : gb.move) { 
 	   if (isplayed(gb,move) == false) {
-			if (move.num > 1) {	
-				if (move.iswhite) {
-					whitestonenum(gb,move.at,move.num);
-				} else {
-					blackstonenum(gb,move.at,move.num);
+			if ((move.at.x <= gb.lines) & (move.at.y <= gb.lines)) {
+				if (move.num > 1) {	
+					if (move.iswhite) {
+						whitestonenum(gb,move.at,move.num);
+					} else {
+						blackstonenum(gb,move.at,move.num);
+					}
+				} else if (move.num == 0) {
+					if (move.iswhite) {
+						renderwhitestone(gb,move.at);
+					}
+					else {
+						renderblackstone(gb,move.at);
+					}	
 				}
-			} else if (move.num == 0) {
-				if (move.iswhite) {
-					renderwhitestone(gb,move.at);
-				}
-				else {
-					renderblackstone(gb,move.at);
-				}
-			}
+			}	
 		}
 	}
-}
+}	
+					
 	
  
 
@@ -187,8 +190,8 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(350,17);
-pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(13,13)};
+Goban mygoban = Goban(400);
+pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(13,13),(20,20),(150,150)};
 Move newstone = Move((9,4),0,false);
 addsequence(mygoban,sequence,150);
 mygoban.move.push(newstone);
