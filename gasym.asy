@@ -37,8 +37,11 @@ struct Goban {
 // after which, later code in the XeLaTeX document can change it. This needs testing.
 
 real stonefontscalar = 1; // default 1
+real charfontscalar = 0.7; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
+
+
 restricted int rhombusnumber = -5; //test that these can't be changed outside module! trust no one :-D
 restricted real rhombusize = 0.45;
 
@@ -190,6 +193,13 @@ void rendermoves(Goban gb) {
 	}
 }	
 				
+void rendercharrhomb(Goban gb, pair at, string glyph, bool iswhite = true) {
+	if (iswhite) {
+		renderwhiterhombus(gb, at);
+		label(gb.pic,scale(charfontscalar)*glyph,at,fontsize((gb.size/(gb.lines+2)*stonefontscalar)));
+		}
+}
+
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
 	bool whiteness = startwhite; // black is the default first move
@@ -227,17 +237,25 @@ void addwhitestones(Goban gb, pair[] newmoves) {
 	}
 }
 
-void addwhiterhombi(Goban gb, pair[] newrhombi) {
-	for (pair xy: newrhombi) {
+void addwhiterhombus(Goban gb,pair xy) {
 		Move addmove = Move(xy,rhombusnumber,true);
 		gb.move.push(addmove);
+}
+
+void addblackrhombus(Goban gb,pair xy) {
+		Move addmove = Move(xy,rhombusnumber,false);
+		gb.move.push(addmove);
+}
+
+void addwhiterhombi(Goban gb, pair[] newrhombi) {
+	for (pair xy: newrhombi) {
+		addwhiterhombus(gb,xy);
 	}	
 }
 
 void addblackrhombi(Goban gb, pair[] newrhombi) {
 	for (pair xy: newrhombi) {
-		Move addmove = Move(xy,rhombusnumber,false);
-		gb.move.push(addmove);
+		addblackrhombus(gb,xy);
 	}	
 }
 
@@ -253,12 +271,12 @@ pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
 pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
 pair[] newblacks = {(3,5),(4,6),(5,7)};
-addsequence(mygoban,sequence,96);
+addsequence(mygoban,sequence,1);
 //addsequence(mygoban,abusetest,13, true);
 addwhiterhombi(mygoban,newstones);
 addblackrhombi(mygoban,newblacks);
 //addwhitestones(mygoban,newwhites);
 //addblackstones(mygoban,newblacks);
 drawgoban(mygoban);
-
+rendercharrhomb(mygoban,(6,10),"@");
 shipout(mygoban.pic);
