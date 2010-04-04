@@ -30,7 +30,6 @@ struct Goban {
 	void operator init(int size, int lines=19) {
 		this.size = size;
 		this.lines = lines;
-	//	this.move = new Move[];
 	}
 }
 
@@ -167,10 +166,7 @@ void rendermoves(Goban gb) {
 		}
 	}
 }	
-					
-	
- 
-
+				
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
 	bool whiteness = startwhite; // black is the default first move
@@ -194,6 +190,21 @@ void addstones(Goban gb, pair[] newmoves, bool startwhite = false) {
 	}
 }
 
+void addblackstones(Goban gb, pair[] newmoves) {
+	for (pair xy : newmoves) {
+		Move addmove = Move(xy,0,false);
+		gb.move.push(addmove);
+	}
+}
+
+void addwhitestones(Goban gb, pair[] newmoves) {
+	for (pair xy : newmoves) {
+		Move addmove = Move(xy,0,true);
+		gb.move.push(addmove);
+	}
+}
+
+
 void drawgoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
 	rendermoves(gb);
@@ -205,5 +216,9 @@ pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(
 addsequence(mygoban,sequence,150);
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
 addstones(mygoban,newstones);
+pair[] newwhites = {(3,2),(4,3),(5,4),(6,5)};
+addwhitestones(mygoban,newwhites);
+pair[] newblacks = {(3,5),(4,6),(5,7)};
+addblackstones(mygoban,newblacks);
 drawgoban(mygoban);
 shipout(mygoban.pic);
