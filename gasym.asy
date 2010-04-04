@@ -131,9 +131,8 @@ void rendergoban(Goban gb) {
 bool isplayed (Goban gb, Move move, int moveindex) {
 
 // detects already played intersections.
-// currently returns true only if the number is larger than a prior play,
-// which is correct for such pieces. Haven't yet decided what's correct for 
-// num <= 0. 
+// considers the absolute order of play to be the array order 
+// of the moves; this should be respected. 
 
 	bool status = false;
 	for (int i=0; i< gb.move.length; ++i) {
@@ -218,6 +217,8 @@ void drawgoban(Goban gb) {
 Goban mygoban = Goban(400);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 addsequence(mygoban,sequence,96);
+pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
+addsequence(mygoban,abusetest,13, true);
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
 addstones(mygoban,newstones);
 pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
