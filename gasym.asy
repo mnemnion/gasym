@@ -47,8 +47,16 @@ void renderblackstone(picture pic=currentpicture,pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
 }
 
+void renderblackstone(Goban gb, pair intersection) {
+	filldraw(gb.pic,circle(intersection,0.47),black);
+}
+
 void renderwhitestone(picture pic=currentpicture,pair intersection) {
 	filldraw(pic,circle(intersection,0.46),white);
+}
+
+void renderwhitestone(Goban gb, pair intersection) {
+	filldraw(gb.pic,circle(intersection,0.46),white);
 }
 
 void whitestonenum(Goban gb, pair intersection, int movenum) {
@@ -121,12 +129,9 @@ void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 bool isplayed (Goban gb, Move move) {
 
 // detects already played intersections.
-// if both stones have the same num (e.g. 0 for unnumbered stones) it will
-// return false; this keeps the move from detecting itself, and probably
-// constitutes correct behavior for un-numbered moves. 
-//
-// since all unexpected behavior is < 1, this could be caught and handled
-// however one likes.
+// currently returns true only if the number is larger than a prior play,
+// which is correct for such pieces. Haven't yet decided what's correct for 
+// num <= 0. 
 
 	bool status = false;
 	for (Move xy : gb.move ) {
@@ -141,15 +146,26 @@ bool isplayed (Goban gb, Move move) {
 
 void rendermoves(Goban gb) {
 	for(Move move : gb.move) { 
-	   if (isplayed(gb,move) == false) {	
-			if (move.iswhite) {
-				whitestonenum(gb,move.at,move.num);
-			} else {
-				blackstonenum(gb,move.at,move.num);
+	   if (isplayed(gb,move) == false) {
+			if (move.num > 1) {	
+				if (move.iswhite) {
+					whitestonenum(gb,move.at,move.num);
+				} else {
+					blackstonenum(gb,move.at,move.num);
+				}
+			} else if (move.num == 0) {
+				if (move.iswhite) {
+					renderwhitestone(gb,move.at);
+				}
+				else {
+					renderblackstone(gb,move.at);
+				}
 			}
 		}
 	}
-} 
+}
+	
+ 
 
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
@@ -172,7 +188,9 @@ void drawgoban(Goban gb) {
 
 // main sequence. starting to look like high level behavior!
 Goban mygoban = Goban(350,17);
-pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9)};
-addsequence(mygoban,sequence,7,true);
+pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(13,13)};
+Move newstone = Move((9,4),0,false);
+addsequence(mygoban,sequence,150);
+mygoban.move.push(newstone);
 drawgoban(mygoban);
 shipout(mygoban.pic);
