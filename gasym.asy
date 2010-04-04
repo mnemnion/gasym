@@ -147,7 +147,8 @@ bool isplayed (Goban gb, Move move) {
 void rendermoves(Goban gb) {
 	for(Move move : gb.move) { 
 	   if (isplayed(gb,move) == false) {
-			if ((move.at.x <= gb.lines) & (move.at.y <= gb.lines)) {
+			if ((move.at.x <= gb.lines) & (move.at.y <= gb.lines)
+			  & (move.at.x > 0) & (move.at.y > 0)) {
 				if (move.num > 1) {	
 					if (move.iswhite) {
 						whitestonenum(gb,move.at,move.num);
@@ -179,8 +180,17 @@ void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = fals
 		addmove.num = i;
 		addmove.iswhite = whiteness;
 		whiteness = !whiteness;
-		i = i + 1; // no postfix rly? lolz
+		i = i + 1; 
 		gb.move.push(addmove);
+	}
+}
+
+void addstones(Goban gb, pair[] newmoves, bool startwhite = false) {
+	bool whiteness = startwhite;
+	for (pair xy : newmoves) {
+		Move addmove = Move(xy,0,whiteness);
+		gb.move.push(addmove);
+		whiteness = !whiteness;
 	}
 }
 
@@ -191,9 +201,9 @@ void drawgoban(Goban gb) {
 
 // main sequence. starting to look like high level behavior!
 Goban mygoban = Goban(400);
-pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(13,13),(20,20),(150,150)};
-Move newstone = Move((9,4),0,false);
+pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 addsequence(mygoban,sequence,150);
-mygoban.move.push(newstone);
+pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
+addstones(mygoban,newstones);
 drawgoban(mygoban);
 shipout(mygoban.pic);
