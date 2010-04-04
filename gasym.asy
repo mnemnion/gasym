@@ -39,7 +39,8 @@ struct Goban {
 real stonefontscalar = 1; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
-
+restricted int rhombusnumber = -5; //test that these can't be changed outside module! trust no one :-D
+restricted real rhombusize = 0.45;
 
 void renderblackstone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
@@ -50,12 +51,16 @@ void renderblackstone(Goban gb, pair intersection) {
 }
 
 void renderpenrhombus(Goban gb, pair at, pen pencil) {
-	path diamante = ((at.x-0.5,at.y)--(at.x,at.y+0.5)--(at.x+0.5,at.y)--(at.x,at.y-0.5)--cycle);
+	path diamante = ((at.x-rhombusize,at.y)--(at.x,at.y+rhombusize)--(at.x+rhombusize,at.y)--(at.x,at.y-rhombusize)--cycle);
 	filldraw(gb.pic,diamante,pencil);
 }
 
 void renderwhiterhombus(Goban gb, pair at) {
 	renderpenrhombus(gb,at,white);
+}
+
+void renderblackrhombus(Goban gb, pair at) {
+	renderpenrhombus(gb,at,black);
 }
 
 void renderwhitestone(picture pic=currentpicture, pair intersection) {
@@ -170,11 +175,16 @@ void rendermoves(Goban gb) {
 				} else if (move.num == 0) {
 					if (move.iswhite) {
 						renderwhitestone(gb,move.at);
-					}
-					else {
+					} else {
 						renderblackstone(gb,move.at);
-					}	
-				}
+					}
+				} else if (move.num == rhombusnumber) {
+					if (move.iswhite) {
+						renderwhiterhombus(gb,move.at);
+					} else {
+						renderblackrhombus(gb,move.at);
+					}
+				}			
 			}	
 	   	}
 	}
@@ -217,23 +227,38 @@ void addwhitestones(Goban gb, pair[] newmoves) {
 	}
 }
 
+void addwhiterhombi(Goban gb, pair[] newrhombi) {
+	for (pair xy: newrhombi) {
+		Move addmove = Move(xy,rhombusnumber,true);
+		gb.move.push(addmove);
+	}	
+}
+
+void addblackrhombi(Goban gb, pair[] newrhombi) {
+	for (pair xy: newrhombi) {
+		Move addmove = Move(xy,rhombusnumber,false);
+		gb.move.push(addmove);
+	}	
+}
+
 void drawgoban(Goban gb) {
 	rendergoban(gb);
 	rendermoves(gb);
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(400,9);
+Goban mygoban = Goban(400);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
 pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
 pair[] newblacks = {(3,5),(4,6),(5,7)};
-//addsequence(mygoban,sequence,96);
+addsequence(mygoban,sequence,96);
 //addsequence(mygoban,abusetest,13, true);
-//addstones(mygoban,newstones);
+addwhiterhombi(mygoban,newstones);
+addblackrhombi(mygoban,newblacks);
 //addwhitestones(mygoban,newwhites);
 //addblackstones(mygoban,newblacks);
 drawgoban(mygoban);
-renderwhiterhombus(mygoban,(5,5));
+
 shipout(mygoban.pic);
