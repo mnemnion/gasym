@@ -115,19 +115,38 @@ void rendergoban(picture pic=currentpicture, int gobansize, int gobanlines=19) {
 		dot(pic,(gobanlines/2+0.5,gobanlines/2+0.5));
 		}
 		dotfactor = 6; // hard coded, should restore to default, fix later
-	} 
-	
-	//eventually needs to live where it can be modular!
-//	renderwhitestone(pic,(2,2));
-//	label(pic,format(9),(2,2),fontsize((gobansize/(gobancounter+2)*1.15)));
+	} 	
+}
+
+bool isplayed (Goban gb, Move move) {
+
+// detects already played intersections.
+// if both stones have the same num (e.g. 0 for unnumbered stones) it will
+// return false; this keeps the move from detecting itself, and probably
+// constitutes correct behavior for un-numbered moves. 
+//
+// since all unexpected behavior is < 1, this could be caught and handled
+// however one likes.
+
+	bool status = false;
+	for (Move xy : gb.move ) {
+		if (xy.at == move.at) {
+			if (xy.num < move.num) { 
+				status = true;
+			}
+		}
+	}
+	return status;
 }
 
 void rendermoves(Goban gb) {
 	for(Move move : gb.move) { 
-		if (move.iswhite) {
-			whitestonenum(gb,move.at,move.num);
-		} else {
-			blackstonenum(gb,move.at,move.num);
+	   if (isplayed(gb,move) == false) {	
+			if (move.iswhite) {
+				whitestonenum(gb,move.at,move.num);
+			} else {
+				blackstonenum(gb,move.at,move.num);
+			}
 		}
 	}
 } 
@@ -152,8 +171,8 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(400,9);
-pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9)};
+Goban mygoban = Goban(350,13);
+pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9)};
 addsequence(mygoban,sequence,7,true);
 drawgoban(mygoban);
 shipout(mygoban.pic);
