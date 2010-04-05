@@ -41,6 +41,7 @@ struct Goban {
 real stonefontscalar = 1; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
+real stonepenscalar = 0.06;   // default TBD
 real charfontscalar = 0.4; // default 0.4
 
 
@@ -100,18 +101,23 @@ void renderblackrhombus(Goban gb, pair at) {
 	renderpenrhombus(gb,at,black);
 }
 
+void rendersquareglyph(Goban gb, pair at, pen modpen) {
+	real w = 0.20;
+	path squarify = ((at.x-w,at.y-w)--(at.x-w,at.y+w)--(at.x+w,at.y+w)--(at.x+w,at.y-w)--cycle);
+	draw(gb.pic,squarify,modpen);
+}
+
 void rendersquarestone(Goban gb, pair at, bool iswhite, pen modpen=currentpen) {
-	real w = 0.25;
+	real w = 0.20;
 	path squarify = ((at.x-w,at.y-w)--(at.x-w,at.y+w)--(at.x+w,at.y+w)--(at.x+w,at.y-w)--cycle);
 	if (iswhite) {
 		renderwhitestone(gb,at);
-		draw(gb.pic,squarify,modpen+black);
+		rendersquareglyph(gb,at,modpen);
 	} else {
 		renderblackstone(gb,at);
-		draw(gb.pic,squarify,modpen+white);
-		
+		rendersquareglyph(gb,at,modpen);
 	}
-}
+} 
 
 void rendercharrhomb(Goban gb, pair at, string glyph, bool iswhite = true) {
 	if (iswhite) {
@@ -286,7 +292,7 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(400);
+Goban mygoban = Goban(400,13);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
@@ -301,6 +307,6 @@ addblackrhombi(mygoban,newblacks);
 drawgoban(mygoban);
 rendercharrhomb(mygoban,(6,10),"@");
 renderblankintersection(mygoban,(10,6));
-rendersquarestone(mygoban,(6,11),true);
-rendersquarestone(mygoban,(7,10),false,linewidth(2));
+rendersquarestone(mygoban,(6,11),true,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
+rendersquarestone(mygoban,(7,10),false,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
 shipout(mygoban.pic);
