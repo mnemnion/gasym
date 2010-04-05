@@ -23,12 +23,14 @@ struct Move {
 struct Goban {
 	int size;
 	int lines;
+	real fontsize;
 	picture pic;
 	Move[] move;
 
 	void operator init(int size, int lines=19) {
 		this.size = size;
 		this.lines = lines;
+		fontsize = this.size/(this.lines+2);
 	}
 }
 
@@ -37,13 +39,31 @@ struct Goban {
 // after which, later code in the XeLaTeX document can change it. This needs testing.
 
 real stonefontscalar = 1; // default 1
-real charfontscalar = 0.7; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
+real charfontscalar = 0.5; // default 1
 
 
 restricted int rhombusnumber = -5; //test that these can't be changed outside module! trust no one :-D
 restricted real rhombusize = 0.45;
+
+bool isplayed (Goban gb, Move move, int moveindex) {
+
+// detects already played intersections.
+// considers the absolute order of play to be the array order 
+// of the moves; this should be respected. 
+
+	bool status = false;
+	for (int i=0; i< gb.move.length; ++i) {
+		Move xy = gb.move[i];
+		if (xy.at == move.at) {
+			if (i < moveindex) { 
+				status = true;
+			} 
+		}
+	}
+	return status;
+}
 
 void renderblackstone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
@@ -66,6 +86,13 @@ void renderblackrhombus(Goban gb, pair at) {
 	renderpenrhombus(gb,at,black);
 }
 
+void rendercharrhomb(Goban gb, pair at, string glyph, bool iswhite = true) {
+	if (iswhite) {
+		renderwhiterhombus(gb, at);
+		label(gb.pic,scale(charfontscalar)*glyph,at,fontsize(gb.fontsize*stonefontscalar));
+		}
+}
+
 void renderwhitestone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.46),white);
 }
@@ -78,12 +105,12 @@ void whitestonenum(Goban gb, pair intersection, int movenum) {
 	renderwhitestone(gb.pic,intersection);
 	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*stonefontscalar)) );
+		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonefontscalar)) ;
 	} 
 	else if (movenum <100) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*stonetenscalar*stonefontscalar)) );
+		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar));
 	} else if (movenum > 99){
-		label(gb.pic,xscale(stonehundredscalar)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*stonetenscalar*stonefontscalar)) );
+		label(gb.pic,xscale(stonehundredscalar)*movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar));
 	}	
 }
 
@@ -91,12 +118,12 @@ void blackstonenum(Goban gb, pair intersection, int movenum) {
 	renderblackstone(gb.pic,intersection);
 	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*stonefontscalar))+white);
+		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonefontscalar)+white);
 	} 
 	else if (movenum <100) {
-		label(gb.pic,movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*stonetenscalar*stonefontscalar))+white);
+		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar)+white);
 	} else if (movenum > 99){
-			label(gb.pic,xscale(stonehundredscalar)*movenumtext,intersection,fontsize((gb.size/(gb.lines+2)*stonetenscalar*stonefontscalar))+white);
+			label(gb.pic,xscale(stonehundredscalar)*movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar)+white);
 	}
 }
 
@@ -145,24 +172,6 @@ void rendergoban(Goban gb) {
 	rendergoban(gb.pic,gb.size,gb.lines);
 }
 
-bool isplayed (Goban gb, Move move, int moveindex) {
-
-// detects already played intersections.
-// considers the absolute order of play to be the array order 
-// of the moves; this should be respected. 
-
-	bool status = false;
-	for (int i=0; i< gb.move.length; ++i) {
-		Move xy = gb.move[i];
-		if (xy.at == move.at) {
-			if (i < moveindex) { 
-				status = true;
-			} 
-		}
-	}
-	return status;
-}
-
 void rendermoves(Goban gb) {
 	for (int i=0; i< gb.move.length; ++i) {
 		Move move = gb.move[i]; //by referenece; should work the same as before
@@ -193,13 +202,6 @@ void rendermoves(Goban gb) {
 	}
 }	
 				
-void rendercharrhomb(Goban gb, pair at, string glyph, bool iswhite = true) {
-	if (iswhite) {
-		renderwhiterhombus(gb, at);
-		label(gb.pic,scale(charfontscalar)*glyph,at,fontsize((gb.size/(gb.lines+2)*stonefontscalar)));
-		}
-}
-
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
 	bool whiteness = startwhite; // black is the default first move
@@ -265,7 +267,7 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(400);
+Goban mygoban = Goban(400,13);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
