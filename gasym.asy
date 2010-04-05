@@ -41,11 +41,11 @@ struct Goban {
 real stonefontscalar = 1; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
-real charfontscalar = 0.5; // default 1
+real charfontscalar = 0.4; // default 0.4
 
 
 restricted int rhombusnumber = -5; //test that these can't be changed outside module! trust no one :-D
-restricted real rhombusize = 0.45;
+restricted real rhombusize = 0.35;
 
 bool isplayed (Goban gb, Move move, int moveindex) {
 
@@ -65,6 +65,11 @@ bool isplayed (Goban gb, Move move, int moveindex) {
 	return status;
 }
 
+void renderblankintersection(Goban gb, pair at) {
+	real w = 0.5;
+	path blankify = ((at.x-w,at.y-w)--(at.x-w,at.y+w)--(at.x+w,at.y+w)--(at.x+w,at.y-w)--cycle);
+	filldraw(gb.pic,blankify,white,white);
+}
 void renderblackstone(picture pic=currentpicture, pair intersection) {
 	filldraw(pic,circle(intersection,0.47),black);
 }
@@ -274,11 +279,12 @@ pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
 pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
 pair[] newblacks = {(3,5),(4,6),(5,7)};
 addsequence(mygoban,sequence,1);
-//addsequence(mygoban,abusetest,13, true);
+addsequence(mygoban,abusetest,13, true);
 addwhiterhombi(mygoban,newstones);
 addblackrhombi(mygoban,newblacks);
 //addwhitestones(mygoban,newwhites);
 //addblackstones(mygoban,newblacks);
 drawgoban(mygoban);
 rendercharrhomb(mygoban,(6,10),"@");
+renderblankintersection(mygoban,(10,6));
 shipout(mygoban.pic);
