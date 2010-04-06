@@ -9,7 +9,7 @@ struct Move {
 	int num; //positive for moves, negative for other symbols
 	bool iswhite; 
 	bool special; //both false is black 
-	string tag; //special symbol for stone or intersection
+	string tag; //special symbol for stone or at
 	string comment;
 	pen specialpen; //sends a color or font ; might be needed.
 	
@@ -50,7 +50,7 @@ restricted real rhombusize = 0.35;
 
 bool isplayed (Goban gb, Move move, int moveindex) {
 
-// detects already played intersections.
+// detects already played ats.
 // considers the absolute order of play to be the array order 
 // of the moves; this should be respected. 
 
@@ -66,26 +66,26 @@ bool isplayed (Goban gb, Move move, int moveindex) {
 	return status;
 }
 
-void renderblankintersection(Goban gb, pair at) {
+void renderblankat(Goban gb, pair at) {
 	real w = 0.5;
 	path blankify = ((at.x-w,at.y-w)--(at.x-w,at.y+w)--(at.x+w,at.y+w)--(at.x+w,at.y-w)--cycle);
 	filldraw(gb.pic,blankify,white,white);
 }
 
-void renderblackstone(picture pic=currentpicture, pair intersection) {
-	filldraw(pic,circle(intersection,0.47),black);
+void renderblackstone(picture pic=currentpicture, pair at) {
+	filldraw(pic,circle(at,0.47),black);
 }
 
-void renderblackstone(Goban gb, pair intersection) {
-	filldraw(gb.pic,circle(intersection,0.47),black);
+void renderblackstone(Goban gb, pair at) {
+	filldraw(gb.pic,circle(at,0.47),black);
 }
 
-void renderwhitestone(picture pic=currentpicture, pair intersection) {
-	filldraw(pic,circle(intersection,0.46),white);
+void renderwhitestone(picture pic=currentpicture, pair at) {
+	filldraw(pic,circle(at,0.46),white);
 }
 
-void renderwhitestone(Goban gb, pair intersection) {
-	filldraw(gb.pic,circle(intersection,0.46),white);
+void renderwhitestone(Goban gb, pair at) {
+	filldraw(gb.pic,circle(at,0.46),white);
 }
 
 void renderpenrhombus(Goban gb, pair at, pen pencil) {
@@ -126,29 +126,29 @@ void rendercharrhomb(Goban gb, pair at, string glyph, bool iswhite = true) {
 		}
 }
 
-void whitestonenum(Goban gb, pair intersection, int movenum) {
-	renderwhitestone(gb.pic,intersection);
+void whitestonenum(Goban gb, pair at, int movenum) {
+	renderwhitestone(gb.pic,at);
 	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonefontscalar)) ;
+		label(gb.pic,movenumtext,at,fontsize(gb.fontsize*stonefontscalar)) ;
 	} 
 	else if (movenum <100) {
-		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar));
+		label(gb.pic,movenumtext,at,fontsize(gb.fontsize*stonetenscalar*stonefontscalar));
 	} else if (movenum > 99){
-		label(gb.pic,xscale(stonehundredscalar)*movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar));
+		label(gb.pic,xscale(stonehundredscalar)*movenumtext,at,fontsize(gb.fontsize*stonetenscalar*stonefontscalar));
 	}	
 }
 
-void blackstonenum(Goban gb, pair intersection, int movenum) {
-	renderblackstone(gb.pic,intersection);
+void blackstonenum(Goban gb, pair at, int movenum) {
+	renderblackstone(gb.pic,at);
 	string movenumtext = string(movenum);
 	if (movenum > 1 & movenum < 10 ) {
-		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonefontscalar)+white);
+		label(gb.pic,movenumtext,at,fontsize(gb.fontsize*stonefontscalar)+white);
 	} 
 	else if (movenum <100) {
-		label(gb.pic,movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar)+white);
+		label(gb.pic,movenumtext,at,fontsize(gb.fontsize*stonetenscalar*stonefontscalar)+white);
 	} else if (movenum > 99){
-			label(gb.pic,xscale(stonehundredscalar)*movenumtext,intersection,fontsize(gb.fontsize*stonetenscalar*stonefontscalar)+white);
+			label(gb.pic,xscale(stonehundredscalar)*movenumtext,at,fontsize(gb.fontsize*stonetenscalar*stonefontscalar)+white);
 	}
 }
 
@@ -292,7 +292,7 @@ void drawgoban(Goban gb) {
 }
 
 // main sequence. starting to look like high level behavior!
-Goban mygoban = Goban(400,13);
+Goban mygoban = Goban(400);
 pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
 pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
@@ -306,7 +306,7 @@ addblackrhombi(mygoban,newblacks);
 //addblackstones(mygoban,newblacks);
 drawgoban(mygoban);
 rendercharrhomb(mygoban,(6,10),"@");
-renderblankintersection(mygoban,(10,6));
+renderblankat(mygoban,(10,6));
 rendersquarestone(mygoban,(6,11),true,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
 rendersquarestone(mygoban,(7,10),false,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
 shipout(mygoban.pic);
