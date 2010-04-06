@@ -23,6 +23,8 @@ struct Move {
 struct Goban {
 	int size;
 	int lines;
+	int movenum;
+	bool whitemove;
 	real fontsize;
 	picture pic;
 	Move[] move;
@@ -31,6 +33,8 @@ struct Goban {
 		this.size = size;
 		this.lines = lines;
 		fontsize = this.size/(this.lines+2);
+		this.movenum = 1;
+		this.whitemove = false; // black plays first
 	}
 }
 
@@ -203,7 +207,7 @@ void rendermoves(Goban gb) {
 	   	if (isplayed(gb,move,i) == false) {
 			if ((move.at.x <= gb.lines) & (move.at.y <= gb.lines)
 			  & (move.at.x > 0) & (move.at.y > 0)) {
-				if (move.num > 1) {	
+				if (move.num > 0) {	
 					if (move.iswhite) {
 						whitestonenum(gb,move.at,move.num);
 					} else {
@@ -226,6 +230,15 @@ void rendermoves(Goban gb) {
 	   	}
 	}
 }	
+
+void addstonenum(Goban gb, pair at, int movenum, bool iswhite = false) {
+	Move addmove = new Move;
+	addmove.at = at;
+	addmove.num = movenum;
+	addmove.iswhite = iswhite;
+	gb.move.push(addmove);
+	
+}
 				
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
@@ -235,11 +248,14 @@ void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = fals
 		addmove.at = xy;
 		addmove.num = i;
 		addmove.iswhite = whiteness;
-		whiteness = !whiteness;
-		i = i + 1; 
 		gb.move.push(addmove);
+		whiteness = !whiteness;
+		i = i + 1;		
 	}
+	gb.movenum = i;
+	gb.whitemove = whiteness;
 }
+
 
 void addstones(Goban gb, pair[] newmoves, bool startwhite = false) {
 	bool whiteness = startwhite;
@@ -264,13 +280,13 @@ void addwhitestones(Goban gb, pair[] newmoves) {
 	}
 }
 
-void addwhiterhombus(Goban gb,pair xy) {
-		Move addmove = Move(xy,rhombusnumber,true);
+void addwhiterhombus(Goban gb,pair at) {
+		Move addmove = Move(at,rhombusnumber,true);
 		gb.move.push(addmove);
 }
 
-void addblackrhombus(Goban gb,pair xy) {
-		Move addmove = Move(xy,rhombusnumber,false);
+void addblackrhombus(Goban gb,pair at) {
+		Move addmove = Move(at,rhombusnumber,false);
 		gb.move.push(addmove);
 }
 
@@ -291,22 +307,37 @@ void drawgoban(Goban gb) {
 	rendermoves(gb);
 }
 
+void testsuite(Goban gb) {
+	pair[] firstrow  = {(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,13),(1,19)};
+	pair[] secondrow = {(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(2,13),(2,19)};
+	pair[] thirdrow  = {(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9),(3,13),(3,19)};
+	pair[] fourthrow = {(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(4,7),(4,8),(4,9),(4,13),(4,19)};
+	addsequence(gb,firstrow,gb.movenum,true);
+	addsequence(gb,secondrow,gb.movenum,gb.whitemove);
+	addstones(gb,thirdrow);
+	addsequence(gb,fourthrow,gb.movenum,gb.whitemove);
+}
+
 // main sequence. starting to look like high level behavior!
+
 Goban mygoban = Goban(400);
-pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
-pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
-pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
-pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
-pair[] newblacks = {(3,5),(4,6),(5,7)};
-addsequence(mygoban,sequence,1);
-addsequence(mygoban,abusetest,13, true);
-addwhiterhombi(mygoban,newstones);
-addblackrhombi(mygoban,newblacks);
+testsuite(mygoban);
+drawgoban(mygoban);
+shipout(mygoban.pic);
+
+//pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
+//pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
+//pair[] newstones = {(2,3),(3,4),(4,5),(5,6),(6,7)};
+//pair[] newwhites = {(3,2),(4,3),(5,4),(5,5),(6,5)};
+//pair[] newblacks = {(3,5),(4,6),(5,7)};
+//addsequence(mygoban,sequence,1);
+//addsequence(mygoban,abusetest,13, true);
+//addwhiterhombi(mygoban,newstones);
+//addblackrhombi(mygoban,newblacks);
 //addwhitestones(mygoban,newwhites);
 //addblackstones(mygoban,newblacks);
-drawgoban(mygoban);
-rendercharrhomb(mygoban,(6,10),"@");
-renderblankat(mygoban,(10,6));
-rendersquarestone(mygoban,(6,11),true,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
-rendersquarestone(mygoban,(7,10),false,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
-shipout(mygoban.pic);
+//rendercharrhomb(mygoban,(6,10),"@");
+//renderblankat(mygoban,(10,6));
+//rendersquarestone(mygoban,(6,11),true,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
+//rendersquarestone(mygoban,(7,10),false,linewidth(mygoban.size/mygoban.lines*stonepenscalar)+red);
+
