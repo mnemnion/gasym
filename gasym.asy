@@ -30,6 +30,7 @@ struct Goban {
 	Move[] move;
 
 	void operator init(int size, int lines=19) {
+		// add something that sets the picture size! FIXME
 		this.size = size;
 		this.lines = lines;
 		fontsize = this.size/(this.lines+2);
@@ -46,7 +47,7 @@ real stonefontscalar = 1; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
 real stonepenscalar = 0.06;   // default TBD
-real charfontscalar = 0.4; // default 0.4
+real charfontscalar = 1; // default 0.4
 
 
 restricted int rhombusnumber = -5; //test that these can't be changed outside module! trust no one :-D
@@ -74,6 +75,11 @@ void renderblankat(Goban gb, pair at) {
 	real w = 0.5;
 	path blankify = ((at.x-w,at.y-w)--(at.x-w,at.y+w)--(at.x+w,at.y+w)--(at.x+w,at.y-w)--cycle);
 	filldraw(gb.pic,blankify,white,white);
+}
+
+void renderchar(Goban gb, pair at, string glyph) {
+	// Currently requires that the goban be drawn so that the units are correct
+	label(gb.pic,scale(charfontscalar)*glyph,at,fontsize(gb.fontsize*stonefontscalar));
 }
 
 void renderblackstone(picture pic=currentpicture, pair at) {
@@ -240,6 +246,12 @@ void addstonenum(Goban gb, pair at, int movenum, bool iswhite = false) {
 	
 }
 				
+void addmove(Goban gb, pair at) {
+	addstonenum(gb,at,gb.movenum,gb.whitemove);
+	gb.movenum = ++gb.movenum;
+	gb.whitemove = ! gb.whitemove;
+}
+				
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
 	bool whiteness = startwhite; // black is the default first move
@@ -256,6 +268,9 @@ void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = fals
 	gb.whitemove = whiteness;
 }
 
+void addsequence(Goban gb, pair[] newmoves) {
+	addsequence(gb,newmoves,gb.movenum,gb.whitemove);
+}
 
 void addstones(Goban gb, pair[] newmoves, bool startwhite = false) {
 	bool whiteness = startwhite;
@@ -312,18 +327,41 @@ void testsuite(Goban gb) {
 	pair[] secondrow = {(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(2,13),(2,19)};
 	pair[] thirdrow  = {(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,7),(3,8),(3,9),(3,13),(3,19)};
 	pair[] fourthrow = {(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(4,7),(4,8),(4,9),(4,13),(4,19)};
-	addsequence(gb,firstrow,gb.movenum,true);
-	addsequence(gb,secondrow,gb.movenum,gb.whitemove);
+	addsequence(gb,firstrow);
+	addsequence(gb,secondrow);
 	addstones(gb,thirdrow);
-	addsequence(gb,fourthrow,gb.movenum,gb.whitemove);
+	addsequence(gb,fourthrow);
+	addmove(gb,(5,1));
+	addmove(gb,(5,2));
 }
 
 // main sequence. starting to look like high level behavior!
 
-Goban mygoban = Goban(400);
+Goban mygoban = Goban(400,9);
 testsuite(mygoban);
 drawgoban(mygoban);
+renderblankat(mygoban,(5,3));
+renderchar(mygoban,(5,3),"δ");
+
 shipout(mygoban.pic);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //pair[] sequence = {(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(5,5),(7,7),(8,8),(9,9),(20,20),(-3,-5),(150,150),(13,13)};
 //pair[] abusetest = {(-2,5),(-24,-24),(150,150),(5,-14),(12,12)};
