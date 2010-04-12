@@ -33,7 +33,8 @@ struct Goban {
 		// add something that sets the picture size! FIXME
 		this.size = size;
 		this.lines = lines;
-		fontsize = this.size/(this.lines+2);
+		this.fontsize = this.size/(this.lines+2);
+		unitsize(this.pic,this.fontsize);
 		this.movenum = 1;
 		this.whitemove = false; // black plays first
 	}
