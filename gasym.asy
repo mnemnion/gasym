@@ -9,7 +9,7 @@ struct Move {
 	int num; //positive for moves, negative for other symbols
 	bool iswhite; 
 	bool special; //both false is black 
-	string tag; //special symbol for stone or at
+	string glyph; //special symbol for stone or at
 	string comment;
 	pen specialpen; //sends a color or font ; might be needed.
 	
@@ -30,7 +30,6 @@ struct Goban {
 	Move[] move;
 
 	void operator init(int size, int lines=19) {
-		// add something that sets the picture size! FIXME
 		this.size = size;
 		this.lines = lines;
 		this.fontsize = this.size/(this.lines+2);
@@ -40,6 +39,24 @@ struct Goban {
 	}
 }
 
+Move mumumumove[] = new Move[]; //can this possibly work?
+  // though it makes the Baby Jesus cry, this variable seems to be needed for cloneGoban to function
+  // which is in turn needed because I can't figure out how to pass structures by value. hmm.
+
+Goban cloneGoban(Goban b) {
+	Goban a = new Goban;
+	a.size = b.size;
+	a.lines = b.lines;
+	a.movenum = b.movenum;
+	a.whitemove = b.whitemove;
+	a.fontsize = b.fontsize;
+	erase(a.pic);
+	add(a.pic,b.pic); //believe it or not, this adds b to a! (or should, asy manual pg 49)
+	a.move = copy(b.move);
+	return a;
+}
+
+
 // Global variables -- kind of afraid of these b/c I don't understand their interaction w/ XeTeX
 //  -- it should be as simple as the variables initializing when the module loads,
 // after which, later code in the XeLaTeX document can change it. This needs testing.
@@ -48,10 +65,11 @@ real stonefontscalar = 1; // default 1
 real stonetenscalar = 0.7; // default 0.7
 real stonehundredscalar = 0.7; // default 0.7
 real stonepenscalar = 0.06;   // default TBD
-real charfontscalar = 1; // default 0.4
+real charfontscalar = 0.8; // default 0.4
 
 
 restricted int rhombusnumber = -5; //test that these can't be changed outside module! trust no one :-D
+restricted int charnumber = -6;
 restricted real rhombusize = 0.35;
 
 bool isplayed (Goban gb, Move move, int moveindex) {
@@ -72,7 +90,7 @@ bool isplayed (Goban gb, Move move, int moveindex) {
 	return status;
 }
 
-void renderblankat(Goban gb, pair at) {
+void renderblanksquare(Goban gb, pair at) {
 	real w = 0.5;
 	path blankify = ((at.x-w,at.y-w)--(at.x-w,at.y+w)--(at.x+w,at.y+w)--(at.x+w,at.y-w)--cycle);
 	filldraw(gb.pic,blankify,white,white);
@@ -232,6 +250,9 @@ void rendermoves(Goban gb) {
 					} else {
 						renderblackrhombus(gb,move.at);
 					}
+				} else if (move.num == charnumber) {
+					renderblanksquare(gb,move.at);
+					renderchar(gb,move.at,move.glyph);
 				}			
 			}	
 	   	}
@@ -252,7 +273,14 @@ void addmove(Goban gb, pair at) {
 	gb.movenum = ++gb.movenum;
 	gb.whitemove = ! gb.whitemove;
 }
-				
+	
+void addchar(Goban gb, pair at, string glyph) {
+	Move addmove = new Move;
+	addmove.at = at;
+	addmove.num = charnumber;
+	addmove.glyph = glyph;
+	gb.move.push(addmove);
+}				
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
 	bool whiteness = startwhite; // black is the default first move
@@ -334,15 +362,19 @@ void testsuite(Goban gb) {
 	addsequence(gb,fourthrow);
 	addmove(gb,(5,1));
 	addmove(gb,(5,2));
+	addchar(gb,(5,3),"@");
+	addmove(gb,(5,4));
 }
 
 // main sequence. starting to look like high level behavior!
 
 Goban mygoban = Goban(400,9);
+Goban yourgoban = Goban(300,9);
+addmove(yourgoban,(5,5));
+mygoban = cloneGoban(yourgoban);
 testsuite(mygoban);
-drawgoban(mygoban);
-renderblankat(mygoban,(5,3));
-renderchar(mygoban,(5,3),"δ");
+drawgoban(yourgoban);
+
 
 shipout(mygoban.pic);
 
