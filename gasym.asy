@@ -354,7 +354,7 @@ void reflectgoban(Goban gb) {
 		return b;
 	}
 	for (int i=0; i< gb.move.length; ++i) {
-			gb.move[i].at = flipxy(gb.move[i].at);
+			gb.move[i].at = (gb.move[i].at.y, gb.move[i].at.x);
 	}
 }
 
@@ -383,7 +383,7 @@ void testsuite(Goban gb) {
 // main sequence. starting to look like high level behavior!
 
 Goban mygoban = Goban(400,9);
-Goban yourgoban = Goban(300,19);
+Goban yourgoban = Goban(300,15);
 addmove(mygoban,(5,5));
 testsuite(mygoban);
 mygoban = cloneGoban(yourgoban);
