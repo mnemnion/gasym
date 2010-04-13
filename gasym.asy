@@ -348,11 +348,6 @@ void addblackrhombi(Goban gb, pair[] newrhombi) {
 }
 
 void reflectgoban(Goban gb) {
-	pair flipxy(pair a) {
-		pair b;
-		b = (a.y,a.x);
-		return b;
-	}
 	for (int i=0; i< gb.move.length; ++i) {
 			gb.move[i].at = (gb.move[i].at.y, gb.move[i].at.x);
 	}
