@@ -56,11 +56,6 @@ Goban cloneGoban(Goban b) {
 	return a;
 }
 
-pair flipxy(pair a) {
-	pair b;
-	b = (a.y,a.x);
-	return b;
-}
 
 // Global variables -- kind of afraid of these b/c I don't understand their interaction w/ XeTeX
 //  -- it should be as simple as the variables initializing when the module loads,
@@ -285,7 +280,8 @@ void addchar(Goban gb, pair at, string glyph) {
 	addmove.num = charnumber;
 	addmove.glyph = glyph;
 	gb.move.push(addmove);
-}				
+}			
+	
 void addsequence(Goban gb, pair[] newmoves, int startnum, bool startwhite = false) {
 	int i = startnum;
 	bool whiteness = startwhite; // black is the default first move
@@ -352,6 +348,11 @@ void addblackrhombi(Goban gb, pair[] newrhombi) {
 }
 
 void reflectgoban(Goban gb) {
+	pair flipxy(pair a) {
+		pair b;
+		b = (a.y,a.x);
+		return b;
+	}
 	for (int i=0; i< gb.move.length; ++i) {
 			gb.move[i].at = flipxy(gb.move[i].at);
 	}
@@ -383,11 +384,11 @@ void testsuite(Goban gb) {
 
 Goban mygoban = Goban(400,9);
 Goban yourgoban = Goban(300,19);
-addmove(yourgoban,(5,5));
+addmove(mygoban,(5,5));
+testsuite(mygoban);
 mygoban = cloneGoban(yourgoban);
 testsuite(mygoban);
 drawgoban(yourgoban);
-
 shipout(mygoban.pic);
 
 
